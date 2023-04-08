@@ -20,6 +20,8 @@ func main() {
 	r.POST("/posts", controllers.PostsCreate)
 	r.GET("/posts", controllers.PostsIndex)
 	r.GET("/posts/:id", controllers.GetPostById)
+	r.PATCH("/posts/:id", controllers.UpdatePost)
+	r.DELETE("/posts/:id", controllers.DeletePostById)
 
 	// Running it at bottom
 	r.Run()

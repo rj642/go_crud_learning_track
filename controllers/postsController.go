@@ -56,3 +56,55 @@ func GetPostById(c *gin.Context) {
 	})
 
 }
+
+func UpdatePost(c *gin.Context) {
+	// Get the id of the url
+	id := c.Param("id")
+
+	// Get the request from the body
+	var body struct {
+		Title string
+		Body  string
+	}
+
+	c.Bind(&body)
+
+	// Find the post were updating
+	var post models.Post
+	initializers.DB.Find(&post, id)
+
+	// Update it
+	initializers.DB.Model(&post).Updates(models.Post{
+		Title: body.Title,
+		Body:  body.Body,
+	})
+
+	// Send response to user
+
+	c.JSON(200, gin.H{
+		"post": post,
+	})
+
+}
+
+func DeletePostById(c *gin.Context) {
+	// Get the post id to delete
+	id := c.Param("id")
+
+	// Check if post exists or not
+	var post models.Post
+	initializers.DB.Find(&post, id)
+
+	if post.DeletedAt.Valid {
+		// Respond
+		c.JSON(404, gin.H{
+			"success": false,
+		})
+	} else {
+		// Delete the post from database
+		initializers.DB.Delete(&models.Post{}, id)
+
+		// Respond
+		c.Status(200)
+	}
+}
